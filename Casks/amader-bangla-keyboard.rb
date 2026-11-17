@@ -1,6 +1,6 @@
 cask "amader-bangla-keyboard" do
-  version "1.0.2"
-  sha256 "70f5a75266b912e32e84f2c7d8af8794a8e29ac6647a92b0a8202fbc8a167f3b"
+  version "1.0.3"
+  sha256 "812e2dbc04da92dcce739daffa25801c36b292b1e7162e398f70507cb119f99d"
 
   url "https://github.com/amerganim/MacOSBanglaKeyboard/releases/download/v#{version}/AmaderBanglaKeyboard.zip"
   name "Amader Bangla Keyboard"
