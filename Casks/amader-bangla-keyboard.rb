@@ -12,22 +12,33 @@ cask "amader-bangla-keyboard" do
     strategy :github_latest
   end
 
-  depends_on macos: ">= :big_sur"
+  depends_on :macos
 
   input_method "AmaderBanglaKeyboard.app"
 
-  postflight do
-    app = "#{Dir.home}/Library/Input Methods/AmaderBanglaKeyboard.app"
+  postflight_steps do
     # Free app without a paid Apple certificate: allow it to run.
-    system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", app]
-    system_command "/usr/bin/pkill", args: ["-x", "AmaderBanglaKeyboard"], must_succeed: false
-    system_command "#{app}/Contents/MacOS/AmaderBanglaKeyboard", args: ["--enable"], must_succeed: false
+    run "/usr/bin/xattr",
+        args:           ["-dr", "com.apple.quarantine", "Library/Input Methods/AmaderBanglaKeyboard.app"],
+        chdir:          "/Users/{{user}}",
+        writable_paths: ["Library/Input Methods/AmaderBanglaKeyboard.app"],
+        writable_base:  :home,
+        must_succeed:   false
+    terminate_process "AmaderBanglaKeyboard"
+    run "Library/Input Methods/AmaderBanglaKeyboard.app/Contents/MacOS/AmaderBanglaKeyboard",
+        args:         ["--enable"],
+        base:         :home,
+        must_succeed: false,
+        print_stderr: false
   end
 
-  uninstall_preflight do
-    app = "#{Dir.home}/Library/Input Methods/AmaderBanglaKeyboard.app"
-    if File.exist?(app)
-      system_command "#{app}/Contents/MacOS/AmaderBanglaKeyboard", args: ["--disable"], must_succeed: false
+  uninstall_preflight_steps do
+    if_path_exists "Library/Input Methods/AmaderBanglaKeyboard.app", base: :home do
+      run "Library/Input Methods/AmaderBanglaKeyboard.app/Contents/MacOS/AmaderBanglaKeyboard",
+          args:         ["--disable"],
+          base:         :home,
+          must_succeed: false,
+          print_stderr: false
     end
   end
 
